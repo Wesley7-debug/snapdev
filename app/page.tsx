@@ -446,10 +446,10 @@ export default function Home() {
       )}
 
       {modal === "info" && (
-        <SnapModal title="About markdev" subtitle="Snap Map for builders" onClose={() => setModal(null)}>
+        <SnapModal title="About snapdev" subtitle="Snap Map for builders" onClose={() => setModal(null)}>
           <div className="space-y-3 text-[13.5px] leading-relaxed text-slate-600">
             <p>
-              <span className="font-bold text-slate-900">markdev</span> shows who&apos;s building
+              <span className="font-bold text-slate-900">snapdev</span> shows who&apos;s building
               around you — developers, founders, designers — on a live map.
             </p>
             <ul className="space-y-2">

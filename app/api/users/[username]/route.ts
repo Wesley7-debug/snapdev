@@ -10,8 +10,7 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ username: 
     const doc = await Profile.findOne({ username: username.toLowerCase(), isVisible: true }).lean();
     if (!doc) return NextResponse.json({ error: "not found" }, { status: 404 });
     return NextResponse.json({ profile: toPublicProfile(doc as never) });
-  } catch (e) {
-    console.error(e);
+  } catch {
     return NextResponse.json({ error: "failed" }, { status: 500 });
   }
 }

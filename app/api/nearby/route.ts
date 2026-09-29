@@ -57,8 +57,7 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ builders: out, count: out.length });
-  } catch (e) {
-    console.error(e);
+  } catch {
     return NextResponse.json({ error: "failed to load builders", builders: [] }, { status: 500 });
   }
 }

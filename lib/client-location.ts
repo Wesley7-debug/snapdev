@@ -14,7 +14,9 @@
  * only a local convenience cache of what the user already approved.
  */
 
-export const LOCATION_KEY = "markdev_location";
+export const LOCATION_KEY = "snapdev_location";
+// Pre-rebrand key — read as fallback so returning users keep their spot.
+const LEGACY_LOCATION_KEY = "markdev_location";
 
 export type LocationSource = "gps" | "place" | "profile" | "map";
 
@@ -39,7 +41,7 @@ export function validLngLat(lng: number, lat: number): boolean {
 export function loadSavedLocation(): SavedLocation | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = window.localStorage.getItem(LOCATION_KEY);
+    const raw = window.localStorage.getItem(LOCATION_KEY) ?? window.localStorage.getItem(LEGACY_LOCATION_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<SavedLocation>;
     const lng = Number(parsed.lng);

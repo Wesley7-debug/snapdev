@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Persistent anonymous identity for Markdev.
+ * Persistent anonymous identity for Snapdev.
  *
  * There is intentionally NO authentication here: no login, signup,
  * passwords, or session tokens. This is just a random identifier that
@@ -18,8 +18,11 @@
  *   claim the profile.
  */
 
-export const ANON_ID_KEY = "markdev_anon_id";
-export const ANON_ID_COOKIE = "markdev_anon_id";
+export const ANON_ID_KEY = "snapdev_anon_id";
+export const ANON_ID_COOKIE = "snapdev_anon_id";
+// Pre-rebrand keys — read as fallback so returning users keep their
+// profile, then healed forward to the new keys on next read.
+const LEGACY_ANON_ID_KEY = "markdev_anon_id";
 // 5 years — effectively "forever" for this use case.
 const COOKIE_MAX_AGE = 5 * 365 * 24 * 60 * 60;
 
@@ -54,7 +57,7 @@ function readCookie(): string | null {
     const parts = document.cookie.split(";");
     for (const part of parts) {
       const [k, ...rest] = part.trim().split("=");
-      if (k === ANON_ID_COOKIE) {
+      if (k === ANON_ID_COOKIE || k === LEGACY_ANON_ID_KEY) {
         const v = decodeURIComponent(rest.join("="));
         if (v) return v;
       }
@@ -80,7 +83,7 @@ function writeCookie(id: string) {
 function readLocal(): string | null {
   if (typeof window === "undefined") return null;
   try {
-    return window.localStorage.getItem(ANON_ID_KEY);
+    return window.localStorage.getItem(ANON_ID_KEY) ?? window.localStorage.getItem(LEGACY_ANON_ID_KEY);
   } catch {
     return null;
   }

@@ -1,4 +1,4 @@
-# markdev — find who's building around you
+# snapdev — find who's building around you
 
 A Snap Map for builders. A live world map showing developers, founders,
 designers and makers — search people *and* places, tap any avatar for the
@@ -24,7 +24,6 @@ Built by SlyCodez ([@slycodez](https://x.com/slycodez)).
   shows jittered approximate locations. Hide/show yourself anytime, greyed
   out while hidden. No login, just an anonymous device ID
 - **Edit profile modal** — update everything (username stays fixed)
-- **Worldwide demo seed** (~60 builders across 5 continents)
 
 ## Stack
 
@@ -40,7 +39,7 @@ npm install
 Create `.env.local`:
 
 ```bash
-MONGODB_URI=mongodb://localhost:27017/markdev
+MONGODB_URI=mongodb://localhost:27017/snapdev
 # optional: NEXT_PUBLIC_CARTO_BASEMAP=voyager | positron | dark-matter
 ```
 
@@ -50,42 +49,39 @@ Then:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The app auto-seeds demo
-builders on first load (see API below to wipe + reseed).
+Open [http://localhost:3000](http://localhost:3000). The map starts empty —
+tap **+** to add yourself as the first builder.
 
 ## Scripts
 
-| Command       | What it does              |
-| ------------- | ------------------------- |
-| `npm run dev` | Start dev server          |
-| `npm run build` | Production build        |
-| `npm start`   | Serve production build    |
-| `npm run lint` | Run ESLint               |
+| Command        | What it does           |
+| -------------- | ---------------------- |
+| `npm run dev`  | Start dev server       |
+| `npm run build`| Production build       |
+| `npm start`    | Serve production build |
+| `npm run lint` | Run ESLint             |
 
 ## API
 
 | Endpoint | Method | Purpose |
 | -------- | ------ | ------- |
-| `/api/nearby?lng=&lat=&q=&roles=&statuses=&limit=` | GET | Nearest builders (approx coords + distance, no 150km cap — zoom out to see the world) |
+| `/api/nearby?lng=&lat=&q=&roles=&statuses=&limit=` | GET | Nearest builders (approx coords + distance, no range cap — zoom out to see the world) |
 | `/api/profiles?anonymousId=` | GET | Your own profile (private coords included, owner only) |
 | `/api/profiles` | POST | Create profile (409 `username is taken`) |
 | `/api/profiles` | PATCH | Update profile / visibility / location |
 | `/api/profiles/check?username=` | GET | Live username availability `{ taken, valid }` |
-| `/api/seed` | POST | Upsert worldwide demos (never duplicates) |
-| `/api/seed` | DELETE | **Wipe ALL profiles, then reseed fresh (dev only)** |
 
 ## Project structure
 
 ```
 app/
   page.tsx            # Snap-style home: map + dock + modals + drawers
-  api/nearby|profiles|seed|users
-  u/[username]/       # full-profile card component (drawers use it; no routing)
+  api/nearby|profiles
 components/
   home/               # SnapTopBar, SnapDock, SnapModal, Drawer
   map/                # MapView, markers, clustering
   onboarding/         # add-yourself flow (fields, location, validation)
-  profile/            # EditProfileModal
+  profile/            # full-profile card, EditProfileModal
 hooks/                # useMe, useBuilders, useMapCenter
 lib/                  # geo + places, mongo, anonymous id, client location
 models/               # Profile schema (unique username index, 2dsphere)

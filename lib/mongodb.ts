@@ -4,11 +4,11 @@ const MONGODB_URI = process.env.MONGODB_URI ?? "";
 
 declare global {
   // eslint-disable-next-line no-var
-  var __markdevMongoose: { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null } | undefined;
+  var __snapdevMongoose: { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null } | undefined;
 }
 
-const cached = global.__markdevMongoose ?? { conn: null, promise: null };
-global.__markdevMongoose = cached;
+const cached = global.__snapdevMongoose ?? { conn: null, promise: null };
+global.__snapdevMongoose = cached;
 
 export async function connectDB() {
   if (cached.conn) return cached.conn;

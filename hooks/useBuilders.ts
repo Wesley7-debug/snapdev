@@ -30,18 +30,7 @@ export function useBuilders(refLoc: RefObject<[number, number]>) {
   }, [refLoc]);
 
   useEffect(() => {
-    let dead = false;
-    (async () => {
-      try {
-        await fetch("/api/seed", { method: "POST" });
-      } catch {
-        /* ignore */
-      }
-      if (!dead) loadBuilders();
-    })();
-    return () => {
-      dead = true;
-    };
+    loadBuilders();
   }, [loadBuilders]);
 
   useEffect(() => {

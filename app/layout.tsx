@@ -9,7 +9,7 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "markdev — find who's building around you",
+  title: "snapdev — find who's building around you",
   description: "Discover developers, founders and builders nearby.",
 };
 

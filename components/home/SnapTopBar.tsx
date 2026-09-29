@@ -25,10 +25,10 @@ export default function SnapTopBar({ query, setQuery, resultCount, dbDown, place
       <div className="mx-auto flex max-w-2xl items-start gap-2">
         <div className="pointer-events-auto flex shrink-0 items-center gap-2 rounded-full bg-white/95 py-2 pl-3 pr-4 shadow-lg backdrop-blur">
           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FFFC00] text-[15px] font-black text-slate-900 ring-1 ring-slate-900/10">
-            m
+            s
           </span>
           <span className="hidden text-[15px] font-extrabold tracking-tight text-slate-900 min-[400px]:inline">
-            markdev
+            snapdev
           </span>
         </div>
 

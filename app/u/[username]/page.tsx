@@ -19,11 +19,11 @@ export default async function UserPage({ params }: { params: Promise<{ username:
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-[#eef2f5] px-4 pb-10 pt-6">
       <Link href="/" className="mb-4 inline-flex w-fit items-center gap-2 text-[13.5px] font-semibold text-slate-600">
-        ← <span className="font-extrabold text-slate-900">markdev</span> map
+        ← <span className="font-extrabold text-slate-900">snapdev</span> map
       </Link>
       <PublicCard profile={profile} />
       <p className="mt-6 text-center text-[12.5px] text-slate-400">
-        markdev — find who&apos;s building around you.
+        snapdev — find who&apos;s building around you.
       </p>
     </div>
   );

@@ -1,5 +1,5 @@
 /**
- * Markdev map configuration — engine + basemap provider in one place.
+ * Snapdev map configuration — engine + basemap provider in one place.
  *
  * Engine: MapLibre GL JS (open source, no token, no credit card).
  * Basemap provider: CARTO free vector basemaps (no API key required).
@@ -26,7 +26,7 @@ const CARTO_STYLES: Record<CartoBasemap, string> = {
     "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
 };
 
-// Voyager is Markdev's default: warm and detailed enough to make builder
+// Voyager is Snapdev's default: warm and detailed enough to make builder
 // discovery feel alive, while staying light like the previous map.
 // Positron is the quieter alternative (set NEXT_PUBLIC_CARTO_BASEMAP=positron).
 const DEFAULT_BASEMAP: CartoBasemap = "voyager";

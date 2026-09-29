@@ -16,8 +16,7 @@ export async function GET(req: NextRequest) {
     const doc = await Profile.findOne({ anonymousId: anon }).lean();
     if (!doc) return NextResponse.json({ profile: null });
     return NextResponse.json({ profile: toOwnProfile(doc as never) });
-  } catch (e) {
-    console.error(e);
+  } catch {
     return NextResponse.json({ error: "failed to load profile" }, { status: 500 });
   }
 }
@@ -40,8 +39,7 @@ export async function POST(req: NextRequest) {
         publicLat: pubLat,
       },
     }, { status: 201 });
-  } catch (e) {
-    console.error(e);
+  } catch {
     return NextResponse.json({ error: "failed to create profile" }, { status: 500 });
   }
 }
@@ -55,8 +53,7 @@ export async function PATCH(req: NextRequest) {
     const out = await applyPatch(anon, body);
     if ("error" in out) return NextResponse.json({ error: out.error }, { status: 404 });
     return NextResponse.json({ ok: true });
-  } catch (e) {
-    console.error(e);
+  } catch {
     return NextResponse.json({ error: "failed to update profile" }, { status: 500 });
   }
 }
