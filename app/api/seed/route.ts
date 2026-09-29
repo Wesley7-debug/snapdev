@@ -471,6 +471,38 @@ const DEMO = [
   },
 ];
 
+async function seedAll(): Promise<{ added: number; total: number }> {
+  let added = 0;
+  for (const d of DEMO) {
+    const [pubLng, pubLat] = jitterPublicCoords(d.lng, d.lat);
+    const res = await Profile.updateOne(
+      { username: d.username },
+      {
+        $setOnInsert: {
+          username: d.username,
+          name: d.name,
+          avatar: d.avatar,
+          role: d.role,
+          bio: d.bio,
+          building: d.building,
+          techStack: d.techStack,
+          xHandle: d.xHandle,
+          github: d.github,
+          website: d.website,
+          status: d.status,
+          location: { type: "Point", coordinates: [d.lng, d.lat], city: d.city, country: d.country },
+          publicLocation: { type: "Point", coordinates: [pubLng, pubLat] },
+          isVisible: true,
+        },
+      },
+      { upsert: true }
+    );
+    if (res.upsertedCount > 0) added += 1;
+  }
+  const total = await Profile.countDocuments({});
+  return { added, total };
+}
+
 /**
  * POST /api/seed — upserts demo builders across the world (dev/demo only).
  * Existing usernames are left untouched, so re-running only adds newcomers
@@ -479,37 +511,24 @@ const DEMO = [
 export async function POST() {
   try {
     await connectDB();
-    let added = 0;
-    for (const d of DEMO) {
-      const [pubLng, pubLat] = jitterPublicCoords(d.lng, d.lat);
-      const res = await Profile.updateOne(
-        { username: d.username },
-        {
-          $setOnInsert: {
-            username: d.username,
-            name: d.name,
-            avatar: d.avatar,
-            role: d.role,
-            bio: d.bio,
-            building: d.building,
-            techStack: d.techStack,
-            xHandle: d.xHandle,
-            github: d.github,
-            website: d.website,
-            status: d.status,
-            location: { type: "Point", coordinates: [d.lng, d.lat], city: d.city, country: d.country },
-            publicLocation: { type: "Point", coordinates: [pubLng, pubLat] },
-            isVisible: true,
-          },
-        },
-        { upsert: true }
-      );
-      if (res.upsertedCount > 0) added += 1;
-    }
-    const total = await Profile.countDocuments({});
+    const { added, total } = await seedAll();
     return NextResponse.json({ ok: true, seeded: added > 0, added, total });
-  } catch (e) {
-    console.error(e);
+  } catch {
     return NextResponse.json({ error: "seed failed — is MONGODB_URI set?" }, { status: 500 });
+  }
+}
+
+/**
+ * DELETE /api/seed — wipes ALL profiles, then seeds fresh worldwide demos.
+ * Dev/demo only. This destroys real user data — never expose in production.
+ */
+export async function DELETE() {
+  try {
+    await connectDB();
+    const wiped = await Profile.deleteMany({});
+    const { added, total } = await seedAll();
+    return NextResponse.json({ ok: true, wiped: wiped.deletedCount ?? 0, added, total });
+  } catch {
+    return NextResponse.json({ error: "reseed failed — is MONGODB_URI set?" }, { status: 500 });
   }
 }

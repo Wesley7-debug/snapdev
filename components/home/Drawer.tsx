@@ -43,6 +43,13 @@ export default function Drawer({ onClose, children, label, size = "sm" }: Props)
       >
         <div className="sticky top-0 z-10 bg-white/95 pt-2.5 backdrop-blur">
           <div className="mx-auto h-1 w-10 rounded-full bg-slate-200" />
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute right-3 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-[14px] text-slate-600 transition active:scale-90"
+          >
+            ✕
+          </button>
         </div>
         {children}
       </div>

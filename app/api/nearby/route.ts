@@ -27,12 +27,13 @@ export async function GET(req: NextRequest) {
 
     let docs;
     if (hasRef) {
+      // No $maxDistance: zooming out reveals builders anywhere in the
+      // world (Lagos, Abeokuta, the US…), nearest first.
       docs = await Profile.find({
         ...filter,
         publicLocation: {
           $near: {
             $geometry: { type: "Point", coordinates: [lng, lat] },
-            $maxDistance: 150_000,
           },
         },
       })

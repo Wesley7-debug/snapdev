@@ -17,14 +17,9 @@ export default function OnboardingSheet({ defaultLng, defaultLat, onClose, onCre
   return (
     <Drawer onClose={onClose} label="Add yourself to the map" size="md">
       <div className="p-5 pt-3">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-[17px] font-bold text-slate-900">Add yourself to the map</p>
-            <p className="mt-0.5 text-[13px] text-slate-500">30 seconds. No account, no password.</p>
-          </div>
-          <button onClick={onClose} aria-label="Close" className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500">
-            ✕
-          </button>
+        <div className="pr-10">
+          <p className="text-[17px] font-bold text-slate-900">Add yourself to the map</p>
+          <p className="mt-0.5 text-[13px] text-slate-500">30 seconds. No account, no password.</p>
         </div>
         <div className="mt-4 space-y-3">
           <ProfileFields form={s.form} set={s.set} />

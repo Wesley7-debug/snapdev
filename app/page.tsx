@@ -11,6 +11,7 @@ import SnapModal from "@/components/home/SnapModal";
 import Drawer from "@/components/home/Drawer";
 import FilterBar from "@/components/discovery/FilterBar";
 import PublicCard from "@/app/u/[username]/PublicCard";
+import EditProfileModal from "@/components/profile/EditProfileModal";
 import { avatarColor, initials } from "@/components/ui/Avatar";
 import { formatDistance, matchPlaces, type Place } from "@/lib/geo";
 import { useMe } from "@/hooks/useMe";
@@ -19,7 +20,7 @@ import { useMapCenter } from "@/hooks/useMapCenter";
 
 const MapView = dynamic(() => import("@/components/map/MapView"), { ssr: false });
 
-type ModalId = "nearby" | "filters" | "me" | "myPublic" | "info";
+type ModalId = "nearby" | "filters" | "me" | "myPublic" | "edit" | "info";
 
 type PublicPerson = Pick<
   Builder,
@@ -129,6 +130,31 @@ export default function Home() {
     return () => window.clearTimeout(t);
   }, [b.query]);
 
+  const [shuffling, setShuffling] = useState(false);
+
+  /** Explore: jump to a random builder anywhere in the world + open them. */
+  async function handleShuffle() {
+    setLocationError(null);
+    setShuffling(true);
+    try {
+      const loc = refLoc.current ?? [0, 0];
+      const res = await fetch(`/api/nearby?lng=${loc[0]}&lat=${loc[1]}&limit=200`);
+      const data = await res.json();
+      const pool: Builder[] = (data.builders ?? []).filter(
+        (x: Builder) => !me || x.username !== me.username
+      );
+      if (!pool.length) {
+        setLocationError("No builders on the map yet — be the first to join!");
+        return;
+      }
+      pickBuilder(pool[Math.floor(Math.random() * pool.length)]);
+    } catch {
+      setLocationError("Couldn't explore right now — check your connection.");
+    } finally {
+      setShuffling(false);
+    }
+  }
+
   function handleDock(id: DockId) {
     setLocationError(null);
     switch (id) {
@@ -140,8 +166,14 @@ export default function Home() {
         setModal("filters");
         break;
       case "add":
-        if (me) setModal("me");
-        else setShowOnboarding(true);
+        // Pencil when you have a profile → edit modal preloaded with your info.
+        if (me) {
+          setSelected(null);
+          setModal("edit");
+        } else setShowOnboarding(true);
+        break;
+      case "shuffle":
+        handleShuffle();
         break;
       case "locate":
         // Take the user to THEIR location: profile coords when known,
@@ -195,9 +227,11 @@ export default function Home() {
         ? "filters"
         : modal === "me" || modal === "myPublic"
           ? "me"
-          : modal === "info"
-            ? "info"
-            : null;
+          : modal === "edit"
+            ? "add"
+            : modal === "info"
+              ? "info"
+              : null;
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-[#e8efec]">
@@ -243,6 +277,7 @@ export default function Home() {
         hasMe={!!me}
         meHidden={me ? !me.isVisible : false}
         locating={locating}
+        shuffling={shuffling}
       />
 
       {locationError && (
@@ -396,6 +431,20 @@ export default function Home() {
         </Drawer>
       )}
 
+      {/* Edit your profile — preloaded with your info */}
+      {modal === "edit" && me && (
+        <EditProfileModal
+          me={me}
+          anonId={anonId}
+          onClose={() => setModal(null)}
+          onSaved={() => {
+            setModal(null);
+            loadMe(anonId);
+            b.loadBuilders();
+          }}
+        />
+      )}
+
       {modal === "info" && (
         <SnapModal title="About markdev" subtitle="Snap Map for builders" onClose={() => setModal(null)}>
           <div className="space-y-3 text-[13.5px] leading-relaxed text-slate-600">
@@ -404,7 +453,8 @@ export default function Home() {
               around you — developers, founders, designers — on a live map.
             </p>
             <ul className="space-y-2">
-              <li>＋ <b className="text-slate-800">Add</b> — put yourself on the map in 30 seconds.</li>
+              <li>＋ <b className="text-slate-800">Add</b> — join the map in 30 seconds, then ✏️ edit anytime.</li>
+              <li>🎲 <b className="text-slate-800">Explore</b> — jump to a random builder anywhere in the world.</li>
               <li>📍 <b className="text-slate-800">Nearby</b> — browse builders in view.</li>
               <li>🎛 <b className="text-slate-800">Filters</b> — narrow by role or status.</li>
               <li>◎ <b className="text-slate-800">Locate</b> — jump back to your spot.</li>

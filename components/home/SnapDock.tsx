@@ -1,6 +1,6 @@
 "use client";
 
-export type DockId = "nearby" | "filters" | "add" | "locate" | "me" | "info";
+export type DockId = "nearby" | "filters" | "add" | "shuffle" | "locate" | "me" | "info";
 
 interface DockItem {
   id: DockId;
@@ -16,6 +16,7 @@ interface Props {
   hasMe: boolean;
   meHidden: boolean;
   locating: boolean;
+  shuffling: boolean;
 }
 
 function Icon({ id, hasMe }: { id: DockId; hasMe: boolean }) {
@@ -44,6 +45,16 @@ function Icon({ id, hasMe }: { id: DockId; hasMe: boolean }) {
           />
           <circle cx="16" cy="7" r="2.2" fill="#fff" stroke="currentColor" strokeWidth="2" />
           <circle cx="10" cy="17" r="2.2" fill="#fff" stroke="currentColor" strokeWidth="2" />
+        </svg>
+      );
+    case "shuffle":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={cls} aria-hidden>
+          <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" stroke="currentColor" strokeWidth="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
+          <circle cx="15.5" cy="15.5" r="1.5" fill="currentColor" />
+          <circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" />
+          <circle cx="8.5" cy="15.5" r="1.5" fill="currentColor" />
         </svg>
       );
     case "add":
@@ -106,6 +117,7 @@ function Icon({ id, hasMe }: { id: DockId; hasMe: boolean }) {
 
 const ORDER: DockItem[] = [
   { id: "add", label: "Add me to the map" },
+  { id: "shuffle", label: "Explore — jump to a random builder" },
   { id: "nearby", label: "Nearby builders" },
   { id: "filters", label: "Search & filters" },
   { id: "locate", label: "Go to my location" },
@@ -118,7 +130,7 @@ const ORDER: DockItem[] = [
  * each in its own circle (bigger on desktop).
  * Every icon opens a modal/drawer (except locate, which flies the map).
  */
-export default function SnapDock({ active, onPick, nearbyCount, hasMe, meHidden, locating }: Props) {
+export default function SnapDock({ active, onPick, nearbyCount, hasMe, meHidden, locating, shuffling }: Props) {
   return (
     <div className="absolute bottom-5 right-3 z-20 flex flex-col items-end sm:bottom-6 sm:right-4">
       <div
@@ -147,7 +159,7 @@ export default function SnapDock({ active, onPick, nearbyCount, hasMe, meHidden,
                 isActive ? "bg-slate-900 text-white" : `${tint} disabled:opacity-35`
               }`}
             >
-              {item.id === "locate" && locating ? (
+              {(item.id === "locate" && locating) || (item.id === "shuffle" && shuffling) ? (
                 <span className="h-[22px] w-[22px] animate-spin rounded-full border-[2.5px] border-slate-300 border-t-slate-900 sm:h-[26px] sm:w-[26px]" />
               ) : (
                 <Icon id={item.id} hasMe={hasMe} />
