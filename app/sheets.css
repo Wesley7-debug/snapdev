@@ -1,0 +1,16 @@
+/* markdev sheet + card entrance animations */
+
+.md-sheet {
+  animation: md-rise 0.28s cubic-bezier(0.32, 0.72, 0.35, 1);
+}
+.md-pop {
+  animation: md-pop 0.22s cubic-bezier(0.32, 0.72, 0.35, 1.2);
+}
+@keyframes md-rise {
+  from { transform: translateY(24px); opacity: 0.6; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes md-pop {
+  from { transform: translateY(10px) scale(0.97); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}

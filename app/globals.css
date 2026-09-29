@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@import "./markers.css";
+@import "./sheets.css";
+
+html,
+body {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: "Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.maplibregl-marker {
+  z-index: 5;
+}
